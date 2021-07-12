@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="dao.FloorMapper">
+    <insert id="insert">
+        insert into t_floor(floorName,remark) values (#{floorName},#{remark})
+    </insert>
+    <update id="updateFloor">
+        update t_floor
+        <set>
+            <if test="floorName!=null">
+                floorName = #{floorName},
+            </if>
+            <if test="remark!=null">
+                 remark = #{remark}
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <select id="findFloorList" resultType="entity.Floor">
+        select * from t_floor
+        <where>
+            <if test="floorName !=null and floorName !=''">
+                floorName like concat('%',#{floorName},'%')
+            </if>
+        </where>
+    </select>
+</mapper>

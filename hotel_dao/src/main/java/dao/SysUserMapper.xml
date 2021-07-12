@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="dao.SysUserMapper">
+    <!-- 定义UserMap -->
+    <resultMap id="BaseResultMap" type="entity.SysUser">
+        <result property="id" column="id"/>
+        <!--用户角色关系配置: 一对多-->
+        <collection property="roleList" ofType="entity.Role" column="id" select="dao.RoleMapper.findRoleListByUserId"/>
+
+     </resultMap>
+    <resultMap id="userDeptResultMap" type="entity.SysUser" extends="BaseResultMap">
+        <!--用户部门关系配置-->
+        <association property="dept" javaType="entity.Dept">
+            <result property="deptName" column="deptname"/>
+        </association>
+    </resultMap>
+    <insert id="insert">
+         insert into sys_user (userName, password,
+          realName, sex, deptid,
+          status, email, phone,
+          userType, hireDate, createBy,
+          createDate, remark)
+        values ( #{userName,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR},
+          #{realName,jdbcType=VARCHAR}, #{sex,jdbcType=INTEGER}, #{deptId,jdbcType=INTEGER},
+          #{status,jdbcType=INTEGER}, #{email,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR},
+          #{userType,jdbcType=INTEGER}, #{hireDate,jdbcType=TIMESTAMP}, #{createdBy,jdbcType=INTEGER},
+          #{createDate,jdbcType=TIMESTAMP}, #{remark,jdbcType=VARCHAR})
+    </insert>
+    <update id="updateUser">
+        update sys_user
+        <set>
+            <if test="userName != null">
+                userName = #{userName,jdbcType=VARCHAR},
+            </if>
+            <if test="password != null">
+                password = #{password,jdbcType=VARCHAR},
+            </if>
+            <if test="realName != null">
+                realName = #{realName,jdbcType=VARCHAR},
+            </if>
+            <if test="sex != null">
+                sex = #{sex,jdbcType=INTEGER},
+            </if>
+            <if test="deptId != null">
+                deptid = #{deptId,jdbcType=INTEGER},
+            </if>
+            <if test="status != null">
+                status = #{status,jdbcType=INTEGER},
+            </if>
+            <if test="email != null">
+                email = #{email,jdbcType=VARCHAR},
+            </if>
+            <if test="phone != null">
+                phone = #{phone,jdbcType=VARCHAR},
+            </if>
+            <if test="userType != null">
+                userType = #{userType,jdbcType=INTEGER},
+            </if>
+            <if test="hireDate != null">
+                hireDate = #{hireDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="createdBy != null">
+                createdBy = #{createdBy,jdbcType=INTEGER},
+            </if>
+            <if test="createDate != null">
+                createDate = #{createDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modifyBy != null">
+                modifyBy = #{modifyBy,jdbcType=INTEGER},
+            </if>
+            <if test="modifyDate != null">
+                modifyDate = #{modifyDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="remark != null">
+                remark = #{remark,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    <delete id="deleteUserById">
+        delete from sys_user where id =#{id}
+    </delete>
+    <delete id="deleteUserRole">
+        delete from sys_role_user where uid =#{id}
+    </delete>
+
+    <!-- 根据用户名查询用户信息   -->
+    <select id="findUserByUserName" resultMap="BaseResultMap">
+        select * from sys_user where userName = #{userName}
+    </select>
+    <select id="getDcountByDid" resultType="java.lang.Integer">
+        select count(*) from sys_user where deptid = #{id}
+    </select>
+    <select id="getRcountByDid" resultType="java.lang.Integer">
+         select count(*) from sys_role_user t1 join sys_user t2 on t1.uid=t2.id where t1.rid=#{id}
+    </select>
+    <select id="findUserList" resultMap="userDeptResultMap">
+        select u.*,d.deptname from sys_user u left join sys_dept d on u.deptid=d.id
+        <where>
+            <if test="userName!=null and userName !=''">
+               and userName like concat('%',#{userName},'%')
+            </if>
+            <if test="realName!=null and realName !=''">
+                and realName like concat('%',#{realName},'%')
+            </if>
+            <if test="sex!=null">
+                and sex =#{sex}
+            </if>
+            <if test="deptId!=null">
+                and deptid =#{deptId}
+            </if>
+            <if test="status!=null">
+                and u.status = #{status}
+            </if>
+            <if test="startDate!=null">
+                <![CDATA[ and u.hireDate >= #{startDate} ]]>
+            </if>
+            <if test="endDate!=null">
+                <![CDATA[ and u.hireDate <= #{endDate} ]]>
+            </if>
+        </where>
+    </select>
+
+</mapper>

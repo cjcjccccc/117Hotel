@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="dao.RoleMapper">
+
+    <resultMap id="BaseResultMap" type="entity.Role">
+        <id column="id" jdbcType="INTEGER" property="id" />
+        <result column="roleCode" jdbcType="VARCHAR" property="roleCode" />
+        <result column="roleName" jdbcType="VARCHAR" property="roleName" />
+        <result column="roleDesc" jdbcType="VARCHAR" property="roleDesc" />
+    </resultMap>
+    <insert id="insert">
+        insert into sys_role(roleCode,roleName,roleDesc) values (#{roleCode},#{roleName},#{roleDesc})
+    </insert>
+    <update id="updateRole">
+        update sys_role
+        <set>
+            <if test="roleCode!=null">
+                roleCode = #{roleCode},
+            </if>
+            <if test="roleName!=null">
+                roleName= #{roleName},
+            </if>
+            <if test="roleDesc!=null">
+                roleDesc=#{roleDesc}
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+    <delete id="deleteRoleById">
+        delete from sys_role where id =#{id}
+    </delete>
+    <!--根据用户id查询角色列表-->
+    <select id="findRoleListByUserId" resultMap="BaseResultMap">
+        select * from sys_role t1  join sys_role_user t2
+        on t1.id = t2.rid where t2.uid = #{id} ;
+    </select>
+    <select id="findRoleList" resultType="entity.Role">
+        select * from sys_role
+        <where>
+            <if test="roleName!=null and roleName !=''">
+                roleName like concat('%',#{roleName},'%')
+            </if>
+        </where>
+    </select>
+</mapper>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="dao.DeptMapper">
+    <insert id="insert">
+        insert into sys_dept(deptname,address,createtime,remark)values (#{deptName},#{address},#{createTime},#{remark})
+    </insert>
+    <update id="updateDept">
+        update sys_dept
+        <set>
+            <if test="deptName!=null">
+                deptname = #{deptName},
+            </if>
+            <if test="address!=null">
+                address= #{address},
+            </if>
+            <if test="remark!=null">
+                remark=#{remark}
+            </if>
+        </set>
+         where id = #{id}
+    </update>
+    <delete id="deleteDeptById">
+        delete from sys_dept where id = #{id};
+    </delete>
+
+    <select id="findDeptList" resultType="entity.Dept">
+        select * from sys_dept
+        <where>
+            <if test="deptName!=null and deptName!=''">
+                and deptname like concat('%',#{deptName},'%')
+            </if>
+        </where>
+        order by id
+    </select>
+</mapper>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="dao.AccountMapper">
+
+    <insert id="addAccount">
+        insert into t_account (loginName, password,realName, idCard, phone,email, status, createDate)
+        values (#{loginName,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR},
+          #{realName,jdbcType=VARCHAR}, #{idCard,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR},
+          #{email,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER}, #{createDate,jdbcType=TIMESTAMP}
+          )
+    </insert>
+    <select id="getAccountByName" resultType="entity.Account">
+        select * from t_account where loginName = #{name}
+    </select>
+</mapper>
